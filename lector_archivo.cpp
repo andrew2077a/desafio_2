@@ -7,16 +7,20 @@ using namespace std;
 void lector_archivo(string nombre_archivo){
     ifstream archivo(nombre_archivo);
     string linea;
-
+    string guardar;
     if (archivo.is_open()){
+        for (int i =0;i<2;i++){
+            getline(archivo,linea);
+        }
         while(getline(archivo,linea)){
-            cout<<linea<<endl;
+            guardar+=linea;
         }
         archivo.close();
     }
     else{
         cout<<"El archivo no se pudo abrir"<<endl;
     }
+
 
 }
 
@@ -25,3 +29,4 @@ int main(){
     return 0;
 
 }
+

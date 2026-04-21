@@ -1,3 +1,3 @@
 #include "torneo.h"
 
-torneo::torneo() {}
+Torneo::Torneo() {}

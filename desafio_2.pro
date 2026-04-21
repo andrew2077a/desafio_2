@@ -4,26 +4,26 @@ CONFIG -= app_bundle
 CONFIG -= qt
 
 SOURCES += \
-        estadistica.cpp \
-        fecha.cpp \
-        grupo.cpp \
-        jugador.cpp \
+        Estadistica.cpp \
+        Fecha.cpp \
+        Grupo.cpp \
+        Jugador.cpp \
+        Lista.cpp \
+        Partido.cpp \
+        Simulador.cpp \
         lector_archivo.cpp \
-        lista.cpp \
         main.cpp \
-        partido.cpp \
-        simulador.cpp \
         torneo.cpp
 
 HEADERS += \
-    estadistica.h \
-    fecha.h \
-    grupo.h \
-    jugador.h \
+    Estadistica.h \
+    Fecha.h \
+    Grupo.h \
+    Jugador.h \
+    Lista.h \
+    Partido.h \
+    Simulador.h \
     libreria.h \
-    lista.h \
-    partido.h \
-    simulador.h \
     torneo.h
 
 DISTFILES += \

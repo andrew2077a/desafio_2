@@ -1,7 +1,7 @@
 #ifndef ESTADISTICA_H
 #define ESTADISTICA_H
 
-class estadistica{
+class Estadistica{
 private:
     int golesFavor;
     int golesContra;
@@ -9,16 +9,17 @@ private:
     int partidosEmpatados;
     int partidosPerdidos;
     int tarjetasAmarillas;
-    int targetasRojas;
+    int tarjetasRojas;
     int faltas;
     int minutosJuagados;
     int asistencias;
 
 public:
-    estadistica();
-    operador();
-    asistencias(int a);
+    Estadistica();
+    void actualizar(const Estadistica& otras);
 
+    void operator+=(const Estadistica& otras);
+    int diferenciaGoles();
 };
 
 #endif // ESTADISTICA_H
