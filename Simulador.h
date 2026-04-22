@@ -8,7 +8,7 @@ public:
     static double asignarGolesJugadores( Partido partido , int golesEquipo, bool esLocal);
     static double aplicarTarjetasYFaltas( Partido partido, ListaJugador* jugadores);
     static float calcularPosesion( Equipo local ,  Equipo visitante);
-    static equipo* desempatarPorRanking(Equipo local ,  Equipo visitante);
+    static Equipo* desempatarPorRanking(Equipo local ,  Equipo visitante);
 };
 
 #endif // SIMULADOR_H

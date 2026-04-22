@@ -4,6 +4,7 @@ CONFIG -= app_bundle
 CONFIG -= qt
 
 SOURCES += \
+        Equipo.cpp \
         Estadistica.cpp \
         Fecha.cpp \
         Grupo.cpp \
@@ -16,6 +17,7 @@ SOURCES += \
         torneo.cpp
 
 HEADERS += \
+    Equipo.h \
     Estadistica.h \
     Fecha.h \
     Grupo.h \

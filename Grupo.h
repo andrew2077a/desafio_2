@@ -1,6 +1,6 @@
 #ifndef GRUPO_H
 #define GRUPO_H
-
+#include "Equipo.h"
 
 class Grupo{
 private:

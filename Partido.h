@@ -1,6 +1,6 @@
 #ifndef PARTIDO_H
 #define PARTIDO_H
-
+#include "Equipo.h"
 class Partido{
 private:
     Fecha fecha;
