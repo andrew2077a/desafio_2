@@ -59,6 +59,8 @@ public:
 
     // Operador de flujo
     friend ostream& operator<<(ostream& os, const Estadistica& stats);
+
+    unsigned short int getPartidosJugados();
 };
 
 #endif // ESTADISTICA_H

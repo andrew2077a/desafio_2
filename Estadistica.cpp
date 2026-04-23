@@ -106,6 +106,9 @@ Estadistica Estadistica::operator+(const Estadistica& otras) const
     return resultado;
 }
 
+unsigned short int Estadistica::getPartidosJugados(){
+    return partidosGanados+partidosEmpatados+partidosPerdidos;
+}
 
 ostream& operator<<(ostream& os, const Estadistica& stats)
 {

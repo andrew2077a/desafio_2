@@ -19,7 +19,7 @@ float Equipo::obtenerPromedioGolesFavor() const {
 }
 
 float Equipo::obtenerPromedioGolesContra() const {
-    int partidos = estadisticasHist.getPartidosJugados();
+    unsigned short int partidos = estadisticasHist.getPartidosJugados();
     if (partidos == 0) return 0.0f;
     return (float)estadisticasHist.getGolesContra() / partidos;
 }
@@ -42,7 +42,7 @@ void Equipo::agregarJugador(Jugador* j) {
 }
 
 string Equipo::getNombre() const { return nombrePais; }
-int Equipo::getRanking() const { return (int)rankingFIFA; }
+unsigned short int Equipo::getRanking() const { return (unsigned short int)rankingFIFA; }
 
 void Equipo::actualizarEstadisticas(Partido* partido) {
     if (partido == nullptr) return;

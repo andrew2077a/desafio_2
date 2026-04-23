@@ -5,7 +5,7 @@
 #include "Estadistica.h"
 #include "Lista.h"
 #include "Jugador.h"
-// No incluimos Partido.h aquí para evitar recursividad (Círculo de dependencias)
+
 class Partido;
 
 using namespace std;
@@ -14,18 +14,20 @@ class Equipo {
 private:
     string nombrePais;
     string confederacion;
-    int rankingFIFA;
+    unsigned short int rankingFIFA; // Tipo unificado
     string directorTecnico;
     Estadistica estadisticasHist;
-    Lista<Jugador*>* plantilla;
+    Lista<Jugador*> plantilla; // CAMBIO: Objeto directo, no puntero
 
 public:
     Equipo();
-    Equipo(string nombre, string conf, int ranking, string dt);
-    ~Equipo();
+    Equipo(string nombre, string conf, unsigned short int ranking, string dt);
+    ~Equipo(); // Ahora está casi vacío porque no hay 'new'
 
     void actualizarEstadisticas(Partido* partido);
-    Lista<Jugador*>* obtenerGoleadores();
+
+    // CAMBIO: Retorno por valor (RVO) y const-correctness
+    Lista<Jugador*> obtenerGoleadores() const;
 
     float obtenerPromedioGolesFavor() const;
     float obtenerPromedioGolesContra() const;
