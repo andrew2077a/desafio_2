@@ -1,19 +1,34 @@
 #ifndef JUGADOR_H
 #define JUGADOR_H
+
 #include <string>
-class Jugador{
+#include "Estadistica.h"
+
+using namespace std;
+
+class Partido;
+
+class Jugador {
 private:
     string nombre;
     string apellido;
     int numeroCamiseta;
-    Estadisticas estadisticas;
+    Estadistica estadisticas; // Objeto directo (Eficiencia de caché)
+
 public:
-    Jugador();
+    jugador();
+    Jugador(const string& nom, const string& ape, int num);
 
-    void actualizarEstadisticas(Partido partido, int minutos);
+    // Métodos de actualización
     void acumularGoles(int goles);
-    acumularTarjetas(int amarillas, int rojas);
+    void acumularTarjetas(int amarillas, int rojas);
+    void actualizarEstadisticas(int minutos, int asis, int flts);
 
+    // Getters
+    int getGoles() const;
+    int getNumero() const;
+    string getNombreCompleto() const;
+    const Estadistica& getEstadisticas() const; // Retorno por referencia constante
 };
 
-#endif // JUGADOR_H
+#endif
