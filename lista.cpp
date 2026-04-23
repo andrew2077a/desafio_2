@@ -106,12 +106,9 @@ void Lista<T>::limpiar(){
 template <typename T>
 Lista<T>& Lista<T>::operator=(const Lista<T>& otra)
 {
-    if (this == &otra) return *this;  // descartar autocopia
+    if (this == &otra) return *this;
 
-    // Limpiar memoria actual
-    for (int i=0; i<tamanio; ++i){
-        delete elementos[i];
-    }
+    // Liberar arreglo actual (NO los objetos)
     delete[] elementos;
 
     // Copiar nueva
@@ -119,12 +116,11 @@ Lista<T>& Lista<T>::operator=(const Lista<T>& otra)
     tamanio = otra.tamanio;
     elementos = new T*[capacidad];
 
-    for (int i=0; i<capacidad; ++i) {
-        if (i < tamanio) {
-            elementos[i] = new T(*otra.elementos[i]);
-        } else {
-            elementos[i] = nullptr;
-        }
+    for (int i = 0; i < tamanio; ++i) {
+        elementos[i] = otra.elementos[i];  // Solo copia punteros
+    }
+    for (int i = tamanio; i < capacidad; ++i) {
+        elementos[i] = nullptr;
     }
 
     return *this;
