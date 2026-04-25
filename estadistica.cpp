@@ -93,6 +93,10 @@ int Estadistica::diferenciaGoles() const
     return static_cast<int>(golesFavor) - static_cast<int>(golesContra);
 }
 
+unsigned short int getPartidosJugados() const {
+    return (partidosGanados + partidosEmpatados + partidosPerdidos);
+}
+
 Estadistica& Estadistica::operator+=(const Estadistica& otras)
 {
     actualizar(otras);
