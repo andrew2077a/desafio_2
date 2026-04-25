@@ -1,7 +1,8 @@
 #ifndef JUGADOR_H
 #define JUGADOR_H
-#include "estadistica.h"
+
 #include <string>
+#include "Estadistica.h"
 
 class Jugador
 {
@@ -11,9 +12,16 @@ private:
     unsigned short int numeroCamiseta;
     Estadistica estadisticas;
 
+    Jugador(const Jugador&);//<--No copia
+    Jugador& operator=(const Jugador&);
+
 public:
-    //Constructor
-    Jugador(const std::string& nombre, const std::string& apellido, unsigned short int numeroCamiseta);
+    // Constructor
+    Jugador(const std::string& nombre, const std::string& apellido,
+            unsigned short int numeroCamiseta);
+
+    // Destructor
+    ~Jugador();
 
     // Getters
     std::string getNombre() const;
@@ -21,9 +29,10 @@ public:
     unsigned short int getNumeroCamiseta() const;
     const Estadistica& getEstadisticas() const;
     unsigned short int getGoles() const;
+    std::string getNombreCompleto() const;
 
-    // estadisticas que hizo en el partido
+    // Setter
     void actualizarEstadisticas(const Estadistica& statsPartido);
 };
 
-#endif // JUGADOR_H
+#endif

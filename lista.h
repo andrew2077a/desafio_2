@@ -5,37 +5,34 @@ template <typename T>
 class Lista
 {
 private:
-    T** elementos;     // Arreglo dinamico de punteros a T
-    int capacidad;     // Tamaño max
-    int tamanio;       // Cantidad de elementos
+    T** elementos;
+    int capacidad;
+    int tamanio;
+
+    // Prohibir copia profunda (solo observadora)
+    Lista(const Lista<T>&);
+    Lista<T>& operator=(const Lista<T>&);
 
 public:
-    // Constructor
+    //Constructor
     Lista();
 
-    // Constructor de copia
-    Lista(const Lista<T>& otra);
-
-    // Destructor
+    //Destructor
     ~Lista();
 
-    // Consultas básicas
+    //Getter
     int obtenerCapacidad() const;
     int obtenerTamanio() const;
     bool estaVacia() const;
 
+    //Setter
     void agregar(T* elemento);
     T* obtener(int indice) const;
-    T* operator[](int indice) const;  
+    T* operator[](int indice) const;
 
     void eliminar(int indice);
-    void limpiar(); 
-
-    // Operador de asignacion
-    Lista<T>& operator=(const Lista<T>& otra);
-
+    void limpiar();
 };
 
-#include "lista.cpp"
 
 #endif

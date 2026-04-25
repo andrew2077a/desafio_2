@@ -2,7 +2,6 @@
 #define FECHA_H
 
 #include <iostream>
-using namespace std;
 
 class Fecha
 {
@@ -13,35 +12,38 @@ private:
 
 public:
     // Constructores
-    Fecha(); //--> predeterminado
-    Fecha(int dia_x, int mes_x, int anio_x); //---> por valor
-    Fecha(const Fecha& otra); //---> constructor de copia
+    Fecha();  // Por defecto
+    Fecha(int dia_x, int mes_x, int anio_x); // Con parametros
+    Fecha(const Fecha& otra); // Copia
 
     // Destructor
     ~Fecha();
 
-    // getters
-    unsigned short int get_dia() const;
-    unsigned short int get_mes() const;
-    unsigned short int get_anio() const;
+    // Operador de asignación
+    Fecha& operator=(const Fecha& otra);
 
-    // setters
-    void set_dia(unsigned short int dato);
-    void set_mes(unsigned short int dato);
-    void set_anio(unsigned short int dato);
+    // Getters
+    unsigned short int getDia() const;
+    unsigned short int getMes() const;
+    unsigned short int getAnio() const;
 
-    // sobrecarga de operadores
+    // Setters
+    void setDia(unsigned short int dato);
+    void setMes(unsigned short int dato);
+    void setAnio(unsigned short int dato);
+
+    // Sobrecarga de operadores
     bool operator==(const Fecha& otra) const;
     bool operator<(const Fecha& otra) const;
     bool operator>(const Fecha& otra) const;
     bool operator<=(const Fecha& otra) const;
     bool operator>=(const Fecha& otra) const;
 
-    // metodo auxiliar de suma
+    // Metodo auxiliar
     Fecha sumarDias(unsigned short int dias_extra) const;
 
-    // operador de flujo --->cout (uso de friend para evitar usar getters)
-    friend ostream& operator<<(ostream& os, const Fecha& fecha);
+    // Operador de flujo
+    friend std::ostream& operator<<(std::ostream& os, const Fecha& fecha);
 };
 
 #endif

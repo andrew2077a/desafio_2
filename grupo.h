@@ -2,7 +2,7 @@
 #define GRUPO_H
 
 class Grupo
-{
+{  
 public:
     Grupo();
 };
