@@ -52,6 +52,7 @@ public:
     // Metodos principales
     void actualizar(const Estadistica& otras);//<--- setter
     int diferenciaGoles() const;
+    unsigned short int getPartidosJugados() const;
 
     // Sobrecarga de operadores
     Estadistica& operator+=(const Estadistica& otras);
