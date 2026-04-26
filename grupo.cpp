@@ -3,6 +3,7 @@
 #include <iostream>
 #include <cstdlib>
 #include "fecha.h"
+using namespace std;
 
 static int mi_abs(int x){
     return (x < 0) ? -x : x;
@@ -64,12 +65,12 @@ bool Grupo::puedeAgregar(Equipo* equipo) const {
 }
 
 void Grupo::imprimirGrupo() const {
-    std::cout << "Grupo " << letra << ": ";
+    cout << "Grupo " << letra << ": ";
     for (int i = 0; i < numEquipos; ++i) {
         if (equipos[i])
-            std::cout << equipos[i]->getNombre() << " ";
+            cout << equipos[i]->getNombre() << " ";
     }
-    std::cout << std::endl;
+    cout << endl;
 }
 
 // Fixture y simulación (implementaciones previas)

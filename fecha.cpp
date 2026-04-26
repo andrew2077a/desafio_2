@@ -1,4 +1,5 @@
 #include "Fecha.h"
+using namespace std;
 
 // Constructor por defecto
 Fecha::Fecha() : dia(1), mes(1), anio(2026) {}
@@ -105,7 +106,7 @@ Fecha Fecha::sumarDias(unsigned short int dias_extra) const
 }
 
 // Operador de flujo
-std::ostream& operator<<(std::ostream& os, const Fecha& fecha)
+ostream& operator<<(ostream& os, const Fecha& fecha)
 {
     os << fecha.dia << "/" << fecha.mes << "/" << fecha.anio;
     return os;

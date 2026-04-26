@@ -2,6 +2,7 @@
 #include <cstdlib>
 #include <cmath>
 #include <iostream>
+using namespace std;
 
 Partido::Partido() : fecha(1,1,2026), hora(""), sede(""),
     equipoLocal(nullptr), equipoVisitante(nullptr),
@@ -24,7 +25,7 @@ Partido::Partido() : fecha(1,1,2026), hora(""), sede(""),
 }
 
 // Constructor x parametros
-Partido::Partido(const Fecha& fecha, const std::string& hora, const std::string& sede, Equipo* local, Equipo* visitante)
+Partido::Partido(const Fecha& fecha, const string& hora, const string& sede, Equipo* local, Equipo* visitante)
     : fecha(fecha),
     hora(hora),
     sede(sede),
@@ -365,14 +366,14 @@ bool Partido::hayProrroga() const { return prorroga; }
 
 
 void Partido::imprimirResumen() const {
-    std::cout << "Fecha: " << fecha << " Hora: " << hora << " Sede: " << sede << std::endl;
-    std::cout << equipoLocal->getNombre() << " " << golesLocal << " - " << golesVisitante << " " << equipoVisitante->getNombre() << std::endl;
-    std::cout << "Posesión: " << posesionLocal << "% - " << (100.0f - posesionLocal) << "%" << std::endl;
-    if (prorroga) std::cout << "(Prórroga - " << minutosPartido << " minutos)" << std::endl;
-    std::cout << "Goleadores local: ";
-    for (int i = 0; i < numGoleadoresLocal; ++i) std::cout << goleadoresLocal[i] << " ";
-    std::cout << std::endl;
-    std::cout << "Goleadores visitante: ";
-    for (int i = 0; i < numGoleadoresVisitante; ++i) std::cout << goleadoresVisitante[i] << " ";
-    std::cout << std::endl;
+    cout << "Fecha: " << fecha << " Hora: " << hora << " Sede: " << sede << endl;
+    cout << equipoLocal->getNombre() << " " << golesLocal << " - " << golesVisitante << " " << equipoVisitante->getNombre() << endl;
+    cout << "Posesión: " << posesionLocal << "% - " << (100.0f - posesionLocal) << "%" << endl;
+    if (prorroga) cout << "(Prórroga - " << minutosPartido << " minutos)" << endl;
+    cout << "Goleadores local: ";
+    for (int i = 0; i < numGoleadoresLocal; ++i) cout << goleadoresLocal[i] << " ";
+    cout << endl;
+    cout << "Goleadores visitante: ";
+    for (int i = 0; i < numGoleadoresVisitante; ++i) cout << goleadoresVisitante[i] << " ";
+    cout << endl;
 }

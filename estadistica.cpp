@@ -1,4 +1,5 @@
 #include "Estadistica.h"
+using namespace std;
 
 // Constructor por defecto
 Estadistica::Estadistica()
@@ -95,7 +96,7 @@ Estadistica Estadistica::operator+(const Estadistica& otras) const
 }
 
 // Operador de flujo
-std::ostream& operator<<(std::ostream& os, const Estadistica& stats)
+ostream& operator<<(ostream& os, const Estadistica& stats)
 {
     os << "Goles F: " << stats.golesFavor
        << " | Goles C: " << stats.golesContra
