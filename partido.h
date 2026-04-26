@@ -49,11 +49,13 @@ private:
                       unsigned short int* goleadores,
                       unsigned short int& numGoleadores,
                       Estadistica& statsEquipo);
-    void aplicarTarjetasYFaltas(Equipo* equipo, int* convocados, Estadistica& statsEquipo);
+    void aplicarTarjetasYFaltas(Equipo* equipo, const unsigned short int* convocados, Estadistica& statsEquipo);
     void aplicarTarjetasYFaltasAJugador(Jugador* jug, Estadistica& statsEquipo);
 
 public:
-    // Constructor
+    Partido();   // Constructor por defecto
+
+    // Constructor x parametros
     Partido(const Fecha& fecha, const std::string& hora, const std::string& sede,
             Equipo* local, Equipo* visitante);
 

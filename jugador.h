@@ -4,21 +4,24 @@
 #include <string>
 #include "Estadistica.h"
 
-class Jugador
-{
+class Jugador{
 private:
     std::string nombre;
     std::string apellido;
     unsigned short int numeroCamiseta;
     Estadistica estadisticas;
 
-    Jugador(const Jugador&);//<--No copia
-    Jugador& operator=(const Jugador&);
-
 public:
+
+    Jugador();
+
     // Constructor
     Jugador(const std::string& nombre, const std::string& apellido,
             unsigned short int numeroCamiseta);
+
+    Jugador(const Jugador&);//<--No copia
+
+    Jugador& operator=(const Jugador&);
 
     // Destructor
     ~Jugador();

@@ -9,10 +9,9 @@ SOURCES += \
         fecha.cpp \
         grupo.cpp \
         jugador.cpp \
-        lista.cpp \
         main.cpp \
         partido.cpp \
-        simulador.cpp
+        torneo.cpp
 
 HEADERS += \
     equipo.h \
@@ -22,4 +21,4 @@ HEADERS += \
     jugador.h \
     lista.h \
     partido.h \
-    simulador.h
+    torneo.h

@@ -1,19 +1,29 @@
 #include "Partido.h"
 #include <cstdlib>
-#include <ctime>
 #include <cmath>
 #include <iostream>
 
-template <typename T>
-void swap(T& a, T& b) {
-    T temp = a;
-    a = b;
-    b = temp;
+Partido::Partido() : fecha(1,1,2026), hora(""), sede(""),
+    equipoLocal(nullptr), equipoVisitante(nullptr),
+    golesLocal(0), golesVisitante(0), posesionLocal(50.0f),
+    prorroga(false), minutosPartido(90),
+    numGoleadoresLocal(0), numGoleadoresVisitante(0)
+{
+    // Inicializar arbitros
+    arbitros[0] = "codArbitro1";
+    arbitros[1] = "codArbitro2";
+    arbitros[2] = "codArbitro3";
+
+    // Inicializar arrays de convocados = 0
+    for (int i = 0; i < 11; ++i) {
+        convocadosLocal[i] = 0;
+        convocadosVisitante[i] = 0;
+        goleadoresLocal[i] = 0;
+        goleadoresVisitante[i] = 0;
+    }
 }
 
-
-
-// Constructor
+// Constructor x parametros
 Partido::Partido(const Fecha& fecha, const std::string& hora, const std::string& sede, Equipo* local, Equipo* visitante)
     : fecha(fecha),
     hora(hora),
@@ -42,6 +52,29 @@ Partido::Partido(const Fecha& fecha, const std::string& hora, const std::string&
     }
 }
 
+
+static unsigned short int poissonSample(float lambda)
+{
+    if (lambda <= 0.0f) return 0;
+    float L = exp(-lambda);
+    float p = 1.0f;
+    unsigned short int k = 0;
+    do {
+        k++;
+        p *= (static_cast<float>(rand()) / RAND_MAX);
+    } while (p > L);
+    return k - 1;
+}
+
+
+template <typename T>
+void swap(T& a, T& b) {
+    T temp = a;
+    a = b;
+    b = temp;
+}
+
+
 Partido::~Partido() {
     //Esta clase no se encarga de la eliminacion ni de equipos ni de jugadores
 }
@@ -61,7 +94,7 @@ void Partido::seleccionarConvocados()
     // Paso 2: Barajar ---> uso de swap
     for (unsigned short int i = numJugadoresLocal - 1; i > 0; --i) {
         unsigned short int j = rand() % (i + 1);
-        std::swap(todosLocal[i], todosLocal[j]);
+        swap(todosLocal[i], todosLocal[j]);
     }
 
     // Paso 3: Seleccionar primeros 11 y guardar sus numeros de camiseta
@@ -77,7 +110,7 @@ void Partido::seleccionarConvocados()
 
     for (unsigned short int i = numJugadoresVisitante - 1; i > 0; --i) {
         unsigned short int j = rand() % (i + 1);
-        std::swap(todosVisitante[i], todosVisitante[j]);
+        swap(todosVisitante[i], todosVisitante[j]);
     }
 
     for (int i = 0; i < 11 && i < numJugadoresVisitante; ++i) {
@@ -86,6 +119,7 @@ void Partido::seleccionarConvocados()
         }
     }
 }
+
 
 void Partido::calcularPosesion()
 {
@@ -127,24 +161,6 @@ float Partido::calcularGolesEsperados(Equipo* atacante, Equipo* defensor) const
     if (lambda < 0.0f) lambda = 0.0f;
     if (lambda > 10.0f) lambda = 10.0f;
     return lambda;
-}
-
-
-unsigned short int poissonSample(float lambda)
-{
-    if (lambda <= 0.0f) return 0;
-
-    // Algoritmo de Knuth
-    float L = exp(-lambda);
-    float p = 1.0f;
-    unsigned short int k = 0;
-
-    do {
-        k++;
-        p *= (static_cast<float>(rand()) / RAND_MAX);
-    } while (p > L);
-
-    return k - 1;
 }
 
 
