@@ -29,6 +29,8 @@ public:
 
     static void resetearTodo();
 
+    static void rehacer_memoria();
+
     static void mostrarReporte(const string& nombreFuncionalidad);
 
 };

@@ -3,7 +3,7 @@
 #include <ctime>
 #include <cmath>
 #include <iostream>
-
+#include "Metricas.h"
 template <typename T>
 void swap(T& a, T& b) {
     T temp = a;
@@ -39,6 +39,7 @@ Partido::Partido(const Fecha& fecha, const std::string& hora, const std::string&
         convocadosVisitante[i] = 0;
         goleadoresLocal[i] = 0;
         goleadoresVisitante[i] = 0;
+        Metricas::contarIteracion();
     }
 }
 
@@ -62,10 +63,12 @@ void Partido::seleccionarConvocados()
     for (unsigned short int i = numJugadoresLocal - 1; i > 0; --i) {
         unsigned short int j = rand() % (i + 1);
         std::swap(todosLocal[i], todosLocal[j]);
+        Metricas::contarIteracion();
     }
 
     // Paso 3: Seleccionar primeros 11 y guardar sus numeros de camiseta
     for (int i = 0; i < 11 && i < numJugadoresLocal; ++i) {
+        Metricas::contarIteracion();
         if (todosLocal[i] != nullptr) {
             convocadosLocal[i] = todosLocal[i]->getNumeroCamiseta();
         }
@@ -78,9 +81,11 @@ void Partido::seleccionarConvocados()
     for (unsigned short int i = numJugadoresVisitante - 1; i > 0; --i) {
         unsigned short int j = rand() % (i + 1);
         std::swap(todosVisitante[i], todosVisitante[j]);
+        Metricas::contarIteracion();
     }
 
     for (int i = 0; i < 11 && i < numJugadoresVisitante; ++i) {
+        Metricas::contarIteracion();
         if (todosVisitante[i] != nullptr) {
             convocadosVisitante[i] = todosVisitante[i]->getNumeroCamiseta();
         }
@@ -142,6 +147,7 @@ unsigned short int poissonSample(float lambda)
     do {
         k++;
         p *= (static_cast<float>(rand()) / RAND_MAX);
+        Metricas::contarIteracion();
     } while (p > L);
 
     return k - 1;
@@ -167,8 +173,10 @@ void Partido::asignarGoles(Equipo* equipo, float lambda,
     int intentos = 0;
 
     while (golesAsignados < golesEquipo && intentos < 100) {
+        Metricas::contarIteracion();
         for (int i = 0; i < MAX_JUGADORES && golesAsignados < golesEquipo; ++i) {
             float r = rand() / (float)RAND_MAX;
+            Metricas::contarIteracion();
             if (r < PROB_GOL) {
                 golesAsignados++;
                 // Registrar goleador (numero de camiseta)
@@ -194,6 +202,7 @@ void Partido::asignarGoles(Equipo* equipo, float lambda,
             statsEquipo.actualizar(Estadistica(1, 0, 0, 0, 0, 0, 0, 0, 0, 0));
 
             Jugador* jug = equipo->obtenerJugadorPorNumero(convocados[idx]);
+            Metricas::contarIteracion();
             if (jug) {
                 Estadistica statsJugador(1, 0, 0, 0, 0, 0, 0, 0, 0, 0);
                 jug->actualizarEstadisticas(statsJugador);
@@ -253,6 +262,7 @@ void Partido::aplicarTarjetasYFaltas(Equipo* equipo, const unsigned short int* c
 {
     for (int i = 0; i < 11; ++i) {
         unsigned short int numCamiseta = convocados[i];
+        Metricas::contarIteracion();
         if (numCamiseta != 0) {
             Jugador* jug = equipo->obtenerJugadorPorNumero(numCamiseta);
             if (jug) {
@@ -321,6 +331,7 @@ void Partido::actualizarHistoricos() {
 
     // asignar minutos jugados (90 o 120) a cada convocado.
     for (int i = 0; i < 11; ++i) {
+        Metricas::contarIteracion();
         if (convocadosLocal[i] != 0) {
             Jugador* jug = equipoLocal->obtenerJugadorPorNumero(convocadosLocal[i]);
             if (jug) {
@@ -354,9 +365,9 @@ void Partido::imprimirResumen() const {
     std::cout << "Posesión: " << posesionLocal << "% - " << (100.0f - posesionLocal) << "%" << std::endl;
     if (prorroga) std::cout << "(Prórroga - " << minutosPartido << " minutos)" << std::endl;
     std::cout << "Goleadores local: ";
-    for (int i = 0; i < numGoleadoresLocal; ++i) std::cout << goleadoresLocal[i] << " ";
+    for (int i = 0; i < numGoleadoresLocal; ++i) Metricas::contarIteracion(); std::cout << goleadoresLocal[i] << " ";
     std::cout << std::endl;
     std::cout << "Goleadores visitante: ";
-    for (int i = 0; i < numGoleadoresVisitante; ++i) std::cout << goleadoresVisitante[i] << " ";
+    for (int i = 0; i < numGoleadoresVisitante; ++i) Metricas::contarIteracion(); std::cout << goleadoresVisitante[i] << " ";
     std::cout << std::endl;
 }

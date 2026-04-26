@@ -1,11 +1,15 @@
 #include "lista.h"
+#include "Metricas.h"
 
 // Constructor
 template <typename T>
 Lista<T>::Lista() : capacidad(10), tamanio(0){
     elementos = new T*[capacidad];
+    Metricas::registrarMemoria(sizeof(T*) * capacidad);
+
     for (int i=0; i<capacidad; ++i){
         elementos[i] = nullptr;
+        Metricas::contarIteracion();
     }
 }
 
@@ -15,11 +19,15 @@ Lista<T>::Lista(const Lista<T>& otra)
     : capacidad(otra.capacidad), tamanio(otra.tamanio)
 {
     elementos = new T*[capacidad];
+    Metricas::registrarMemoria(sizeof(T*) * capacidad);
+
     for (int i = 0; i < tamanio; ++i) {
-        elementos[i] = otra.elementos[i];  // Solo copia el puntero
+        elementos[i] = otra.elementos[i];
+        Metricas::contarIteracion();
     }
     for (int i = tamanio; i < capacidad; ++i) {
         elementos[i] = nullptr;
+        Metricas::contarIteracion();
     }
 }
 
@@ -45,19 +53,22 @@ bool Lista<T>::estaVacia() const{
     return tamanio == 0;
 }
 
-
 template <typename T>
 void Lista<T>::agregar(T* elemento){
     if (tamanio >= capacidad) {
         // Redimensionar
-        int nuevaCapacidad = capacidad*2;// <--- doble capacidad
+        int nuevaCapacidad = capacidad * 2;
         T** nuevoArreglo = new T*[nuevaCapacidad];
+
+        Metricas::registrarMemoria(sizeof(T*) * nuevaCapacidad);
 
         for (int i=0; i<capacidad; ++i){
             nuevoArreglo[i] = elementos[i];
+            Metricas::contarIteracion();
         }
         for (int i=capacidad; i<nuevaCapacidad; ++i) {
             nuevoArreglo[i] = nullptr;
+            Metricas::contarIteracion();
         }
 
         delete[] elementos;
@@ -72,7 +83,7 @@ void Lista<T>::agregar(T* elemento){
 template <typename T>
 T* Lista<T>::obtener(int indice) const{
     if (indice<0 || indice>=tamanio){
-        return nullptr;  // Indice invalido
+        return nullptr;
     }
     return elementos[indice];
 }
@@ -82,13 +93,13 @@ T* Lista<T>::operator[](int indice) const{
     return obtener(indice);
 }
 
-
 template <typename T>
 void Lista<T>::eliminar(int indice){
     if (indice<0 || indice>=tamanio) return;
 
     for (int i=indice; i <tamanio-1; ++i){
         elementos[i] = elementos[i+1];
+        Metricas::contarIteracion();
     }
 
     elementos[tamanio - 1] = nullptr;
@@ -99,6 +110,7 @@ template <typename T>
 void Lista<T>::limpiar(){
     for (int i = 0; i < tamanio; ++i) {
         elementos[i] = nullptr;
+        Metricas::contarIteracion();
     }
     tamanio = 0;
 }
@@ -108,19 +120,21 @@ Lista<T>& Lista<T>::operator=(const Lista<T>& otra)
 {
     if (this == &otra) return *this;
 
-    // Liberar arreglo actual (NO los objetos)
     delete[] elementos;
 
-    // Copiar nueva
     capacidad = otra.capacidad;
     tamanio = otra.tamanio;
     elementos = new T*[capacidad];
 
+    Metricas::registrarMemoria(sizeof(T*) * capacidad);
+
     for (int i = 0; i < tamanio; ++i) {
-        elementos[i] = otra.elementos[i];  // Solo copia punteros
+        elementos[i] = otra.elementos[i];
+        Metricas::contarIteracion();
     }
     for (int i = tamanio; i < capacidad; ++i) {
         elementos[i] = nullptr;
+        Metricas::contarIteracion();
     }
 
     return *this;
