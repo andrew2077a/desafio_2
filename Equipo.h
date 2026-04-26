@@ -6,35 +6,50 @@
 #include "Lista.h"
 #include "Jugador.h"
 
-class Partido;
-
-using namespace std;
-
-class Equipo {
+class Equipo
+{
 private:
-    string nombrePais;
-    string confederacion;
-    unsigned short int rankingFIFA; // Tipo unificado
-    string directorTecnico;
+    std::string nombrePais;
+    std::string confederacion;
+    unsigned short int rankingFIFA;
+    std::string directorTecnico;
     Estadistica estadisticasHist;
-    Lista<Jugador*> plantilla; // CAMBIO: Objeto directo, no puntero
+    Lista<Jugador*> plantilla;
+
+    Equipo(const Equipo&);//--->No copiar
+    Equipo& operator=(const Equipo&);
+
+    Lista<Jugador*> plantilla;
 
 public:
+    // Constructores
     Equipo();
-    Equipo(string nombre, string conf, unsigned short int ranking, string dt);
-    ~Equipo(); // Ahora está casi vacío porque no hay 'new'
+    Equipo(const std::string& nombre, const std::string& conf,
+           unsigned short int ranking, const std::string& dt);
 
-    void actualizarEstadisticas(Partido* partido);
+    // Destructor (libera jugadores)
+    ~Equipo();
 
-    // CAMBIO: Retorno por valor (RVO) y const-correctness
-    Lista<Jugador*> obtenerGoleadores() const;
-
+    // Getters
+    std::string getNombre() const;
+    unsigned short int getRanking() const;
+    const Estadistica& getEstadisticas() const;
     float obtenerPromedioGolesFavor() const;
     float obtenerPromedioGolesContra() const;
-    string getNombre() const;
-    int getRanking() const;
+    Lista<Jugador*> obtenerGoleadores() const;
 
+    // Setters
     void agregarJugador(Jugador* j);
+
+    // recibe Estadistica
+    void actualizarEstadisticas(const Estadistica& statsPartido);
+
+
+    // Nuevo método: llena un array con hasta 'max' jugadores - Retorna la cantidad real de jugadores copiados
+    unsigned short int obtenerJugadores(Jugador* destino[], unsigned short int max) const;
+
+    // Obtener jugador por número de camiseta (útil para convocados)
+    Jugador* obtenerJugadorPorNumero(unsigned short int numero) const;
 };
 
 #endif

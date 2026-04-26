@@ -2,7 +2,6 @@
 #define ESTADISTICA_H
 
 #include <iostream>
-using namespace std;
 
 class Estadistica
 {
@@ -21,21 +20,18 @@ private:
 public:
     // Constructores
     Estadistica();
-    Estadistica(unsigned short int gFavor,
-                unsigned short int gContra,
-                unsigned short int ganados,
-                unsigned short int empatados,
-                unsigned short int perdidos,
-                unsigned short int amarillas,
-                unsigned short int rojas,
-                unsigned short int faltasPartido,
-                unsigned short int minutos,
-                unsigned short int asistenciasPartido);
-
-    // Constructor de copia
+    Estadistica(unsigned short int gFavor, unsigned short int gContra,
+                unsigned short int ganados, unsigned short int empatados,
+                unsigned short int perdidos, unsigned short int amarillas,
+                unsigned short int rojas, unsigned short int faltasPartido,
+                unsigned short int minutos, unsigned short int asistenciasPartido);
     Estadistica(const Estadistica& otras);
 
+    // Destructor
     ~Estadistica();
+
+    // Operador de asignacion
+    Estadistica& operator=(const Estadistica& otras);
 
     // Getters
     unsigned short int getGolesFavor() const;
@@ -48,9 +44,10 @@ public:
     unsigned short int getFaltas() const;
     unsigned short int getMinutosJugados() const;
     unsigned short int getAsistencias() const;
+    unsigned short int getPartidosJugados() const;
 
-    // Metodos principales
-    void actualizar(const Estadistica& otras);//<--- setter
+    // Metodos
+    void actualizar(const Estadistica& otras);
     int diferenciaGoles() const;
 
     // Sobrecarga de operadores
@@ -58,9 +55,7 @@ public:
     Estadistica operator+(const Estadistica& otras) const;
 
     // Operador de flujo
-    friend ostream& operator<<(ostream& os, const Estadistica& stats);
-
-    unsigned short int getPartidosJugados();
+    friend std::ostream& operator<<(std::ostream& os, const Estadistica& stats);
 };
 
-#endif // ESTADISTICA_H
+#endif

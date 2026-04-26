@@ -14,6 +14,7 @@ SOURCES += \
         Simulador.cpp \
         lector_archivo.cpp \
         main.cpp \
+        metricas.cpp \
         torneo.cpp
 
 HEADERS += \
@@ -26,6 +27,7 @@ HEADERS += \
     Partido.h \
     Simulador.h \
     libreria.h \
+    metricas.h \
     torneo.h
 
 DISTFILES += \

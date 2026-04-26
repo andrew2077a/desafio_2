@@ -4,31 +4,35 @@
 #include <string>
 #include "Estadistica.h"
 
-using namespace std;
-
-class Partido;
-
-class Jugador {
+class Jugador
+{
 private:
-    string nombre;
-    string apellido;
-    int numeroCamiseta;
-    Estadistica estadisticas; // Objeto directo (Eficiencia de caché)
+    std::string nombre;
+    std::string apellido;
+    unsigned short int numeroCamiseta;
+    Estadistica estadisticas;
+
+    Jugador(const Jugador&);//<--No copia
+    Jugador& operator=(const Jugador&);
 
 public:
-    jugador();
-    Jugador(const string& nom, const string& ape, int num);
+    // Constructor
+    Jugador(const std::string& nombre, const std::string& apellido,
+            unsigned short int numeroCamiseta);
 
-    // Métodos de actualización
-    void acumularGoles(int goles);
-    void acumularTarjetas(int amarillas, int rojas);
-    void actualizarEstadisticas(int minutos, int asis, int flts);
+    // Destructor
+    ~Jugador();
 
     // Getters
-    int getGoles() const;
-    int getNumero() const;
-    string getNombreCompleto() const;
-    const Estadistica& getEstadisticas() const; // Retorno por referencia constante
+    std::string getNombre() const;
+    std::string getApellido() const;
+    unsigned short int getNumeroCamiseta() const;
+    const Estadistica& getEstadisticas() const;
+    unsigned short int getGoles() const;
+    std::string getNombreCompleto() const;
+
+    // Setter
+    void actualizarEstadisticas(const Estadistica& statsPartido);
 };
 
 #endif

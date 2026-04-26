@@ -1,41 +1,21 @@
 #include "Jugador.h"
 
-using namespace std;
+// Constructor
+Jugador::Jugador(const std::string& nombre, const std::string& apellido, unsigned short int numeroCamiseta)
+    : nombre(nombre), apellido(apellido),numeroCamiseta(numeroCamiseta), estadisticas() {}
 
-Jugador::Jugador(const string& nom, const string& ape, int num)
-    : nombre(nom), apellido(ape), numeroCamiseta(num), estadisticas() {
-    // estadisticas() llama al constructor por defecto que pusiste en 0
-}
+// Destructor (no hay memoria dinamica)
+Jugador::~Jugador() {}
 
-void Jugador::acumularGoles(int goles) {
-    // Creamos un objeto temporal con los goles y lo sumamos
-    // Usamos el constructor de Estadistica: Estadistica(gFavor, gContra, PG, PE, PP, TA, TR, Faltas, Min, Asist)
-    Estadistica temp(goles, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-    estadisticas.actualizar(temp);
-}
+// Getters
+std::string Jugador::getNombre() const { return nombre; }
+std::string Jugador::getApellido() const { return apellido; }
+unsigned short int Jugador::getNumeroCamiseta() const { return numeroCamiseta; }
+const Estadistica& Jugador::getEstadisticas() const { return estadisticas; }
+unsigned short int Jugador::getGoles() const { return estadisticas.getGolesFavor(); }
+std::string Jugador::getNombreCompleto() const { return nombre + " " + apellido; }
 
-void Jugador::acumularTarjetas(int amarillas, int rojas) {
-    Estadistica temp(0, 0, 0, 0, 0, amarillas, rojas, 0, 0, 0);
-    estadisticas.actualizar(temp);
-}
-
-void Jugador::actualizarEstadisticas(int minutos, int asis, int flts) {
-    Estadistica temp(0, 0, 0, 0, 0, 0, 0, flts, minutos, asis);
-    estadisticas.actualizar(temp);
-}
-
-int Jugador::getGoles() const {
-    return estadisticas.getGolesFavor();
-}
-
-int Jugador::getNumero() const {
-    return numeroCamiseta;
-}
-
-string Jugador::getNombreCompleto() const {
-    return nombre + " " + apellido;
-}
-
-const Estadistica& Jugador::getEstadisticas() const {
-    return estadisticas;
+// Setter
+void Jugador::actualizarEstadisticas(const Estadistica& statsPartido){
+    estadisticas.actualizar(statsPartido);
 }

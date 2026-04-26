@@ -1,76 +1,92 @@
 #include "Equipo.h"
-#include "Partido.h"
+#include "Metricas.h"
 
-Equipo::Equipo() : nombrePais(""), confederacion(""), rankingFIFA(0), directorTecnico("") {
+// Constructor por defecto
+Equipo::Equipo()
+    : nombrePais(""), confederacion(""), rankingFIFA(0), directorTecnico("") {}
+
+// Constructor con parametros
+Equipo::Equipo(const std::string& nombre, const std::string& conf,
+               unsigned short int ranking, const std::string& dt)
+    : nombrePais(nombre), confederacion(conf),
+    rankingFIFA(ranking), directorTecnico(dt) {}
+
+// Destructor: libera jugadores
+Equipo::~Equipo()
+{
+    for (int i = 0; i < plantilla.obtenerTamanio(); ++i) {
+        delete plantilla[i];
+        Metricas::contarIteracion();
+    }
 }
 
-Equipo::Equipo(string nombre, string conf, unsigned short int ranking, string dt)
-    : nombrePais(nombre),
-    confederacion(conf),
-    rankingFIFA(ranking),
-    directorTecnico(dt) {}
-Equipo::~Equipo() {
-}
+// Getters
+std::string Equipo::getNombre() const { return nombrePais; }
+unsigned short int Equipo::getRanking() const { return rankingFIFA; }
+const Estadistica& Equipo::getEstadisticas() const { return estadisticasHist; }
 
-float Equipo::obtenerPromedioGolesFavor() const {
+float Equipo::obtenerPromedioGolesFavor() const
+{
     unsigned short int partidos = estadisticasHist.getPartidosJugados();
     if (partidos == 0) return 0.0f;
-    return (float)estadisticasHist.getGolesFavor() / partidos;
+    return static_cast<float>(estadisticasHist.getGolesFavor()) / partidos;
 }
 
-float Equipo::obtenerPromedioGolesContra() const {
+float Equipo::obtenerPromedioGolesContra() const
+{
     unsigned short int partidos = estadisticasHist.getPartidosJugados();
     if (partidos == 0) return 0.0f;
-    return (float)estadisticasHist.getGolesContra() / partidos;
+    return static_cast<float>(estadisticasHist.getGolesContra()) / partidos;
 }
 
-Lista<Jugador*> Equipo::obtenerGoleadores() const {
+Lista<Jugador*> Equipo::obtenerGoleadores() const
+{
     Lista<Jugador*> goleadores;
     for (int i = 0; i < plantilla.obtenerTamanio(); ++i) {
         Jugador* j = plantilla[i];
+        Metricas::contarIteracion();
         if (j->getGoles() > 0) {
             goleadores.agregar(j);
         }
     }
-    return goleadores; // El compilador optimiza esto (RVO)
+    return goleadores;
 }
 
-void Equipo::agregarJugador(Jugador* j) {
+void Equipo::agregarJugador(Jugador* j)
+{
     if (j != nullptr) {
-        plantilla.agregar(j); // Usamos '.'
+        plantilla.agregar(j);
     }
 }
 
-string Equipo::getNombre() const { return nombrePais; }
-unsigned short int Equipo::getRanking() const { return (unsigned short int)rankingFIFA; }
+void Equipo::actualizarEstadisticas(const Estadistica& statsPartido)
+{
+    estadisticasHist.actualizar(statsPartido);
+}
 
-void Equipo::actualizarEstadisticas(Partido* partido) {
-    if (partido == nullptr) return;
 
-    unsigned short int golesF = 0;
-    unsigned short int golesC = 0;
+unsigned short int Equipo::obtenerJugadores(Jugador* destino[], unsigned short int max) const
+{
+    unsigned short int total = plantilla.obtenerTamanio();
+    unsigned short int copiar = (total < max) ? total : max;
 
-    // 1. Determinar el rol del equipo comparando direcciones de memoria (this)
-    if (partido->getEquipoLocal() == this) {
-        golesF = (unsigned short int)partido->getGolesLocal();
-        golesC = (unsigned short int)partido->getGolesVisitante();
-    }
-    else if (partido->getEquipoVisitante() == this) {
-        golesF = (unsigned short int)partido->getGolesVisitante();
-        golesC = (unsigned short int)partido->getGolesLocal();
-    } else {
-        return; // El equipo no participó en este partido
+    for (unsigned short int i = 0; i < copiar; ++i) {
+        Metricas::contarIteracion();
+        destino[i] = plantilla[i];
     }
 
-    // 2. Determinar resultado para el historial
-    unsigned short int pg = (golesF > golesC) ? 1 : 0;
-    unsigned short int pe = (golesF == golesC) ? 1 : 0;
-    unsigned short int pp = (golesF < golesC) ? 1 : 0;
+    return copiar;
+}
 
-    // 3. Crear objeto temporal con los datos del partido
-    // Orden: gF, gC, PG, PE, PP, TA, TR, Faltas, Min, Asist
-    Estadistica infoPartido(golesF, golesC, pg, pe, pp, 0, 0, 0, 0, 0);
-
-    // 4. Sumar al historial acumulado usando tu método actualizar
-    this->estadisticasHist.actualizar(infoPartido);
+// Busca un jugador por su número de camiseta
+Jugador* Equipo::obtenerJugadorPorNumero(unsigned short int numero) const
+{
+    for (int i = 0; i < plantilla.obtenerTamanio(); ++i) {
+        Jugador* j = plantilla[i];
+        Metricas::contarIteracion();
+        if (j != nullptr && j->getNumeroCamiseta() == numero) {
+            return j;
+        }
+    }
+    return nullptr;
 }
