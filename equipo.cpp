@@ -60,3 +60,28 @@ void Equipo::actualizarEstadisticas(const Estadistica& statsPartido)
 {
     estadisticasHist.actualizar(statsPartido);
 }
+
+
+unsigned short int Equipo::obtenerJugadores(Jugador* destino[], unsigned short int max) const
+{
+    unsigned short int total = plantilla.obtenerTamanio();
+    unsigned short int copiar = (total < max) ? total : max;
+
+    for (unsigned short int i = 0; i < copiar; ++i) {
+        destino[i] = plantilla[i];
+    }
+
+    return copiar;
+}
+
+// Busca un jugador por su número de camiseta
+Jugador* Equipo::obtenerJugadorPorNumero(unsigned short int numero) const
+{
+    for (int i = 0; i < plantilla.obtenerTamanio(); ++i) {
+        Jugador* j = plantilla[i];
+        if (j != nullptr && j->getNumeroCamiseta() == numero) {
+            return j;
+        }
+    }
+    return nullptr;
+}

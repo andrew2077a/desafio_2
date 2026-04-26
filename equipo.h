@@ -19,6 +19,8 @@ private:
     Equipo(const Equipo&);//--->No copiar
     Equipo& operator=(const Equipo&);
 
+    Lista<Jugador*> plantilla;
+
 public:
     // Constructores
     Equipo();
@@ -41,6 +43,13 @@ public:
 
     // recibe Estadistica
     void actualizarEstadisticas(const Estadistica& statsPartido);
+
+
+    // Nuevo método: llena un array con hasta 'max' jugadores - Retorna la cantidad real de jugadores copiados
+    unsigned short int obtenerJugadores(Jugador* destino[], unsigned short int max) const;
+
+    // Obtener jugador por número de camiseta (útil para convocados)
+    Jugador* obtenerJugadorPorNumero(unsigned short int numero) const;
 };
 
 #endif
