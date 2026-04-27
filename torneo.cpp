@@ -1,4 +1,5 @@
 #include "Torneo.h"
+#include "Metricas.h"
 #include <fstream>
 #include <iostream>
 #include <cstdlib>
@@ -233,29 +234,31 @@ void Torneo::armarGrupos() {
             }
         }
     }
-    // Crear bombos (4 bombos de igual tamaño)
+    // Crear bombos: cada bombo tiene exactamente totalGrupos (12) equipos
+    // Bombo 0: USA + los primeros (totalGrupos-1) del ranking
+    // Bombo 1: siguientes totalGrupos
+    // Bombo 2: siguientes totalGrupos
+    // Bombo 3: los restantes
     unsigned short int numBombos = 4;
     Equipo** bombos[4];
     unsigned short int tamanios[4];
-    unsigned short int base = (totalEquipos-1) / numBombos;
-    unsigned short int restoB = (totalEquipos-1) % numBombos;
-    unsigned short int acum = 0;
     for (int b = 0; b < 4; ++b) {
-        tamanios[b] = base + (b < restoB ? 1 : 0);
+        tamanios[b] = totalGrupos;  // 12 equipos por bombo exacto
         bombos[b] = new Equipo*[tamanios[b]];
-        for (unsigned short int i = 0; i < tamanios[b]; ++i) {
-            bombos[b][i] = resto[acum++];
+    }
+    // Bombo 0: anfitrion + los (totalGrupos-1) primeros del ranking
+    bombos[0][0] = anfitrion;
+    for (unsigned short int i = 0; i < (unsigned short int)(totalGrupos - 1); ++i) {
+        bombos[0][i + 1] = resto[i];
+    }
+    // Bombos 1, 2, 3: siguientes bloques de totalGrupos equipos
+    unsigned short int base = totalGrupos - 1;  // primer indice del resto ya usado
+    for (int b = 1; b < 4; ++b) {
+        for (unsigned short int i = 0; i < totalGrupos; ++i) {
+            unsigned short int restIdx = base + (b - 1) * totalGrupos + i;
+            bombos[b][i] = (restIdx < (unsigned short int)(totalEquipos - 1)) ? resto[restIdx] : nullptr;
         }
     }
-    // Añadir anfitrion al bombo 1 (1ra pocision)
-    Equipo** nuevoBombo1 = new Equipo*[tamanios[0]+1];
-    nuevoBombo1[0] = anfitrion;
-    for (unsigned short int i = 0; i < tamanios[0]; ++i){
-        nuevoBombo1[i+1] = bombos[0][i];
-    }
-    delete[] bombos[0];
-    bombos[0] = nuevoBombo1;
-    tamanios[0]++;
 
     // Sorteo: asignar un equipo de cada bombo a cada grupo, respetando confederaciones
     srand(static_cast<unsigned>(time(nullptr)));
@@ -268,8 +271,9 @@ void Torneo::armarGrupos() {
         for (unsigned short int g = 0; g < totalGrupos; ++g){
             bool asignado = false;
             int intentos = 0;
-            while (!asignado && intentos < 100) {
+            while (!asignado && intentos < 200) {
                 int idx = rand() % tamanios[bombo];
+                ++intentos;  // SIEMPRE incrementar antes del continue
                 if (disponibles[idx] == nullptr) continue;
                 Equipo* elegido = disponibles[idx];
                 if (grupos[g].puedeAgregar(elegido)) {
@@ -277,14 +281,25 @@ void Torneo::armarGrupos() {
                     disponibles[idx] = nullptr;
                     asignado = true;
                 }
-                ++intentos;
             }
             if (!asignado) {
+                // 1. Intentar primero con equipos que sí cumplan la restriccion
                 for (unsigned short int i = 0; i < tamanios[bombo]; ++i) {
-                    if (disponibles[i]) {
+                    if (disponibles[i] && grupos[g].puedeAgregar(disponibles[i])) {
                         grupos[g].agregarEquipo(disponibles[i]);
                         disponibles[i] = nullptr;
+                        asignado = true;
                         break;
+                    }
+                }
+                // 2. Si no encontró ninguno válido, forzar el primero disponible
+                if (!asignado) {
+                    for (unsigned short int i = 0; i < tamanios[bombo]; ++i) {
+                        if (disponibles[i]) {
+                            grupos[g].agregarEquipoForzado(disponibles[i]);
+                            disponibles[i] = nullptr;
+                            break;
+                        }
                     }
                 }
             }
@@ -305,10 +320,36 @@ void Torneo::armarGrupos() {
 // Simulacion de fase de grupos
 void Torneo::simularFaseGrupos() {
     Fecha fechaInicio(20, 6, 2026);
+    cout << "\n=== FASE DE GRUPOS ===" << endl;
     for (unsigned short int g = 0; g < totalGrupos; ++g) {
         grupos[g].generarFixture(fechaInicio);
         grupos[g].jugarPartidos();
     }
+    // Imprimir resultados de cada grupo
+    for (unsigned short int g = 0; g < totalGrupos; ++g) {
+        Equipo* ordenados[4];
+        grupos[g].obtenerTablaPosiciones(ordenados);
+        cout << "\n--- Grupo " << (char)('A' + g) << " - Tabla de posiciones ---" << endl;
+        cout << "Pos | Equipo                | PJ | PG | PE | PP | GF | GC | DG | PTS" << endl;
+        for (int i = 0; i < 4; ++i) {
+            if (!ordenados[i]) continue;
+            const Estadistica& s = ordenados[i]->getEstadisticas();
+            int pts = s.getPartidosGanados()*3 + s.getPartidosEmpatados();
+            cout << " " << i+1 << "  | " << ordenados[i]->getNombre();
+            // padding
+            int len = ordenados[i]->getNombre().length();
+            for (int sp = len; sp < 22; ++sp) cout << ' ';
+            cout << "| " << s.getPartidosJugados()
+                 << "  | " << s.getPartidosGanados()
+                 << "  | " << s.getPartidosEmpatados()
+                 << "  | " << s.getPartidosPerdidos()
+                 << "  | " << s.getGolesFavor()
+                 << "  | " << s.getGolesContra()
+                 << "  | " << s.diferenciaGoles()
+                 << "  | " << pts << endl;
+        }
+    }
+    Metricas::mostrarReporte("Fase de Grupos");
 }
 
 
@@ -349,6 +390,18 @@ void Torneo::transicionADieciseisavos() {
 
     // Construir emparejamientos de R16
     construirEmparejamientos(clasificados, numClasificados, ronda16, numRonda16);
+
+    // Imprimir partidos configurados para R16 (sin simular)
+    cout << "\n=== PARTIDOS CONFIGURADOS PARA DIECISEISAVOS (R16) ===" << endl;
+    for (unsigned short int i = 0; i < numRonda16; ++i) {
+        if (ronda16[i]) {
+            cout << "Partido " << i+1 << ": "
+                 << ronda16[i]->getEquipoLocal()->getNombre()
+                 << " vs "
+                 << ronda16[i]->getEquipoVisitante()->getNombre() << endl;
+        }
+    }
+    Metricas::mostrarReporte("Transicion a Dieciseisavos");
     // Liberar memoria temporal
     delete[] primeros; delete[] segundos; delete[] terceros; delete[] mejoresTerceros; delete[] clasificados;
 }
@@ -399,42 +452,68 @@ void Torneo::simularRonda(Partido** partidos, unsigned short int numPartidos, bo
 }
 
 void Torneo::simularEliminatorias() {
-    // Ronda de 16
+    if (!ronda16 || numRonda16 == 0) {
+        cout << "Error: primero ejecute transicionADieciseisavos()." << endl;
+        return;
+    }
+
+    // ---- R16: 16 partidos -> 16 ganadores ----
+    cout << "\n=== DIECISEISAVOS DE FINAL (R16) ===" << endl;
     simularRonda(ronda16, numRonda16, true);
-    // Obtener ganadores
-    unsigned short int numGanadores8 = numRonda16 / 2;
-    Equipo** ganadores8 = new Equipo*[numGanadores8];
+    for (unsigned short int i = 0; i < numRonda16; ++i) {
+        if (ronda16[i]) ronda16[i]->imprimirResumen();
+    }
+
+    Equipo** ganadores16 = new Equipo*[numRonda16];
     for (unsigned short int i = 0; i < numRonda16; ++i) {
         Partido* p = ronda16[i];
-        if (p->getGolesLocal() > p->getGolesVisitante())
-            ganadores8[i/2] = p->getEquipoLocal();
-        else
-            ganadores8[i/2] = p->getEquipoVisitante();
+        ganadores16[i] = (p->getGolesLocal() >= p->getGolesVisitante())
+                             ? p->getEquipoLocal() : p->getEquipoVisitante();
     }
 
-    // Construir cuartos
-    construirEmparejamientos(ganadores8, numGanadores8, ronda8, numRonda8);
+    // ---- R8 (Octavos): 8 partidos -> 8 ganadores ----
+    cout << "\n=== OCTAVOS DE FINAL (R8) ===" << endl;
+    construirEmparejamientos(ganadores16, numRonda16, ronda8, numRonda8);
     simularRonda(ronda8, numRonda8, true);
-    // Obtener ganadores cuartos
-    unsigned short int numGanadores4 = numRonda8 / 2;
-    Equipo** ganadores4 = new Equipo*[numGanadores4];
+    for (unsigned short int i = 0; i < numRonda8; ++i) {
+        if (ronda8[i]) ronda8[i]->imprimirResumen();
+    }
+
+    Equipo** ganadores8 = new Equipo*[numRonda8];
     for (unsigned short int i = 0; i < numRonda8; ++i) {
         Partido* p = ronda8[i];
-        if (p->getGolesLocal() > p->getGolesVisitante())
-            ganadores4[i/2] = p->getEquipoLocal();
-        else
-            ganadores4[i/2] = p->getEquipoVisitante();
+        ganadores8[i] = (p->getGolesLocal() >= p->getGolesVisitante())
+                            ? p->getEquipoLocal() : p->getEquipoVisitante();
     }
 
-    // Semifinales
-    construirEmparejamientos(ganadores4, numGanadores4, semis, numSemis);
+    // ---- Cuartos: 4 partidos -> 4 ganadores ----
+    cout << "\n=== CUARTOS DE FINAL ===" << endl;
+    construirEmparejamientos(ganadores8, numRonda8, cuartos, numCuartos);
+    simularRonda(cuartos, numCuartos, true);
+    for (unsigned short int i = 0; i < numCuartos; ++i) {
+        if (cuartos[i]) cuartos[i]->imprimirResumen();
+    }
+
+    Equipo** ganadores4 = new Equipo*[numCuartos];
+    for (unsigned short int i = 0; i < numCuartos; ++i) {
+        Partido* p = cuartos[i];
+        ganadores4[i] = (p->getGolesLocal() >= p->getGolesVisitante())
+                            ? p->getEquipoLocal() : p->getEquipoVisitante();
+    }
+
+    // ---- Semis: 2 partidos -> 2 finalistas + 2 para 3er lugar ----
+    cout << "\n=== SEMIFINALES ===" << endl;
+    construirEmparejamientos(ganadores4, numCuartos, semis, numSemis);
     simularRonda(semis, numSemis, true);
-    // Obtener finalistas y perdedores
+    for (unsigned short int i = 0; i < numSemis; ++i) {
+        if (semis[i]) semis[i]->imprimirResumen();
+    }
+
     Equipo* finalistas[2];
     Equipo* perdedores[2];
-    for (unsigned short int i = 0; i < numSemis; ++i) {
+    for (unsigned short int i = 0; i < numSemis && i < 2; ++i) {
         Partido* p = semis[i];
-        if (p->getGolesLocal() > p->getGolesVisitante()) {
+        if (p->getGolesLocal() >= p->getGolesVisitante()) {
             finalistas[i] = p->getEquipoLocal();
             perdedores[i] = p->getEquipoVisitante();
         } else {
@@ -443,16 +522,22 @@ void Torneo::simularEliminatorias() {
         }
     }
 
-    // Final
-    Fecha fechaFin(10,7,2026);
-    final = new Partido(fechaFin, "00:00", "nombreSede", finalistas[0], finalistas[1]);
-    final->simular(true);
-    final->actualizarHistoricos();
-    // Tercer lugar
+    // ---- Tercer lugar ----
+    cout << "\n=== TERCER LUGAR ===" << endl;
+    Fecha fechaFin(10, 7, 2026);
     tercerLugar = new Partido(fechaFin, "00:00", "nombreSede", perdedores[0], perdedores[1]);
     tercerLugar->simular(true);
     tercerLugar->actualizarHistoricos();
+    tercerLugar->imprimirResumen();
 
+    // ---- Final ----
+    cout << "\n=== FINAL ===" << endl;
+    final = new Partido(fechaFin, "00:00", "nombreSede", finalistas[0], finalistas[1]);
+    final->simular(true);
+    final->actualizarHistoricos();
+    final->imprimirResumen();
+
+    delete[] ganadores16;
     delete[] ganadores8;
     delete[] ganadores4;
 }

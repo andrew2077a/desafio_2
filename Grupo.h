@@ -28,6 +28,7 @@ public:
     // Resto de métodos...
     bool agregarEquipo(Equipo* equipo);
     bool puedeAgregar(Equipo* equipo) const;
+    void agregarEquipoForzado(Equipo* equipo);  // ignora restriccion de confederacion
     void imprimirGrupo() const;
 
     void generarFixture(const Fecha& fechaInicio);

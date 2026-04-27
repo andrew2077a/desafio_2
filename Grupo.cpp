@@ -64,6 +64,11 @@ bool Grupo::puedeAgregar(Equipo* equipo) const {
     return true;
 }
 
+void Grupo::agregarEquipoForzado(Equipo* equipo) {
+    if (!equipo || numEquipos >= 4) return;
+    equipos[numEquipos++] = equipo;
+}
+
 void Grupo::imprimirGrupo() const {
     cout << "Grupo " << letra << ": ";
     for (int i = 0; i < numEquipos; ++i) {

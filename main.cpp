@@ -13,12 +13,8 @@ int main() {
     cout << "    UdeAWorldCup - Simulador FIFA 2026  \n";
     cout << "========================================\n";
 
-    cout << "Ingrese el nombre del archivo CSV de equipos: ";
-    string archivo;
-    cin >> archivo;
-
     // El constructor de Torneo carga equipos y jugadores desde el CSV
-    Torneo torneo(archivo);
+    Torneo torneo("C:\\Users\\gisel\\OneDrive\\Escritorio\\practi_c++\\fina\\desafio_2\\selecciones_clasificadas_mundial.csv");
 
     int opcion = -1;
     while (opcion != 0) {
