@@ -24,9 +24,10 @@ void lector_archivo(string nombre_archivo){
 
 }
 
-int main(){
+/*
     lector_archivo("C:\\Users\\gisel\\OneDrive\\Escritorio\\practi_c++\\fina\\desafio_2\\selecciones_clasificadas_mundial.csv");
-    return 0;
+
 
 }
 
+*/

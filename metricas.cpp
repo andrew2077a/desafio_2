@@ -26,7 +26,7 @@ void Metricas::resetearMemoria() {
 }
 
 void Metricas::rehacer_memoria(unsigned long long bytes){
-    memoriaBytes=bytes
+    memoriaBytes=bytes;
 
 }
 

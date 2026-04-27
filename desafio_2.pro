@@ -26,6 +26,7 @@ HEADERS += \
     Lista.h \
     Partido.h \
     Simulador.h \
+    comparadores.h \
     libreria.h \
     metricas.h \
     torneo.h

@@ -1,20 +1,31 @@
 #include "Partido.h"
 #include <cstdlib>
-#include <ctime>
 #include <cmath>
 #include <iostream>
-#include "Metricas.h"
-template <typename T>
-void swap(T& a, T& b) {
-    T temp = a;
-    a = b;
-    b = temp;
+using namespace std;
+
+Partido::Partido() : fecha(1,1,2026), hora(""), sede(""),
+    equipoLocal(nullptr), equipoVisitante(nullptr),
+    golesLocal(0), golesVisitante(0), posesionLocal(50.0f),
+    prorroga(false), minutosPartido(90),
+    numGoleadoresLocal(0), numGoleadoresVisitante(0)
+{
+    // Inicializar arbitros
+    arbitros[0] = "codArbitro1";
+    arbitros[1] = "codArbitro2";
+    arbitros[2] = "codArbitro3";
+
+    // Inicializar arrays de convocados = 0
+    for (int i = 0; i < 11; ++i) {
+        convocadosLocal[i] = 0;
+        convocadosVisitante[i] = 0;
+        goleadoresLocal[i] = 0;
+        goleadoresVisitante[i] = 0;
+    }
 }
 
-
-
-// Constructor
-Partido::Partido(const Fecha& fecha, const std::string& hora, const std::string& sede, Equipo* local, Equipo* visitante)
+// Constructor x parametros
+Partido::Partido(const Fecha& fecha, const string& hora, const string& sede, Equipo* local, Equipo* visitante)
     : fecha(fecha),
     hora(hora),
     sede(sede),
@@ -39,9 +50,31 @@ Partido::Partido(const Fecha& fecha, const std::string& hora, const std::string&
         convocadosVisitante[i] = 0;
         goleadoresLocal[i] = 0;
         goleadoresVisitante[i] = 0;
-        Metricas::contarIteracion();
     }
 }
+
+
+static unsigned short int poissonSample(float lambda)
+{
+    if (lambda <= 0.0f) return 0;
+    float L = exp(-lambda);
+    float p = 1.0f;
+    unsigned short int k = 0;
+    do {
+        k++;
+        p *= (static_cast<float>(rand()) / RAND_MAX);
+    } while (p > L);
+    return k - 1;
+}
+
+
+template <typename T>
+void swap(T& a, T& b) {
+    T temp = a;
+    a = b;
+    b = temp;
+}
+
 
 Partido::~Partido() {
     //Esta clase no se encarga de la eliminacion ni de equipos ni de jugadores
@@ -63,12 +96,10 @@ void Partido::seleccionarConvocados()
     for (unsigned short int i = numJugadoresLocal - 1; i > 0; --i) {
         unsigned short int j = rand() % (i + 1);
         std::swap(todosLocal[i], todosLocal[j]);
-        Metricas::contarIteracion();
     }
 
     // Paso 3: Seleccionar primeros 11 y guardar sus numeros de camiseta
     for (int i = 0; i < 11 && i < numJugadoresLocal; ++i) {
-        Metricas::contarIteracion();
         if (todosLocal[i] != nullptr) {
             convocadosLocal[i] = todosLocal[i]->getNumeroCamiseta();
         }
@@ -81,16 +112,15 @@ void Partido::seleccionarConvocados()
     for (unsigned short int i = numJugadoresVisitante - 1; i > 0; --i) {
         unsigned short int j = rand() % (i + 1);
         std::swap(todosVisitante[i], todosVisitante[j]);
-        Metricas::contarIteracion();
     }
 
     for (int i = 0; i < 11 && i < numJugadoresVisitante; ++i) {
-        Metricas::contarIteracion();
         if (todosVisitante[i] != nullptr) {
             convocadosVisitante[i] = todosVisitante[i]->getNumeroCamiseta();
         }
     }
 }
+
 
 void Partido::calcularPosesion()
 {
@@ -117,40 +147,22 @@ void Partido::calcularPosesion()
 // Formula de goles esperados (ecuación 1 del enunciado)
 float Partido::calcularGolesEsperados(Equipo* atacante, Equipo* defensor) const
 {
-    const float μ = 1.35f;
-    const float α = 0.6f;
-    const float β = 0.4f;
+
+    const float mu    = 1.35f;
+    const float alpha = 0.6f;
+    const float beta  = 0.4f;
 
     float gf = atacante->obtenerPromedioGolesFavor();
     float gc = defensor->obtenerPromedioGolesContra();
 
-    float term1 = (gf / μ);
-    float term2 = (gc / μ);
-    float lambda = μ * powf(term1, α) * powf(term2, β);
+    float term1 = (gf / mu);
+    float term2 = (gc / mu);
+    float lambda = mu * powf(term1, alpha) * powf(term2, beta);
 
     // Acotar para evitar valores extremos
     if (lambda < 0.0f) lambda = 0.0f;
     if (lambda > 10.0f) lambda = 10.0f;
     return lambda;
-}
-
-
-unsigned short int poissonSample(float lambda)
-{
-    if (lambda <= 0.0f) return 0;
-
-    // Algoritmo de Knuth
-    float L = exp(-lambda);
-    float p = 1.0f;
-    unsigned short int k = 0;
-
-    do {
-        k++;
-        p *= (static_cast<float>(rand()) / RAND_MAX);
-        Metricas::contarIteracion();
-    } while (p > L);
-
-    return k - 1;
 }
 
 
@@ -173,10 +185,8 @@ void Partido::asignarGoles(Equipo* equipo, float lambda,
     int intentos = 0;
 
     while (golesAsignados < golesEquipo && intentos < 100) {
-        Metricas::contarIteracion();
         for (int i = 0; i < MAX_JUGADORES && golesAsignados < golesEquipo; ++i) {
             float r = rand() / (float)RAND_MAX;
-            Metricas::contarIteracion();
             if (r < PROB_GOL) {
                 golesAsignados++;
                 // Registrar goleador (numero de camiseta)
@@ -202,7 +212,6 @@ void Partido::asignarGoles(Equipo* equipo, float lambda,
             statsEquipo.actualizar(Estadistica(1, 0, 0, 0, 0, 0, 0, 0, 0, 0));
 
             Jugador* jug = equipo->obtenerJugadorPorNumero(convocados[idx]);
-            Metricas::contarIteracion();
             if (jug) {
                 Estadistica statsJugador(1, 0, 0, 0, 0, 0, 0, 0, 0, 0);
                 jug->actualizarEstadisticas(statsJugador);
@@ -262,7 +271,6 @@ void Partido::aplicarTarjetasYFaltas(Equipo* equipo, const unsigned short int* c
 {
     for (int i = 0; i < 11; ++i) {
         unsigned short int numCamiseta = convocados[i];
-        Metricas::contarIteracion();
         if (numCamiseta != 0) {
             Jugador* jug = equipo->obtenerJugadorPorNumero(numCamiseta);
             if (jug) {
@@ -331,7 +339,6 @@ void Partido::actualizarHistoricos() {
 
     // asignar minutos jugados (90 o 120) a cada convocado.
     for (int i = 0; i < 11; ++i) {
-        Metricas::contarIteracion();
         if (convocadosLocal[i] != 0) {
             Jugador* jug = equipoLocal->obtenerJugadorPorNumero(convocadosLocal[i]);
             if (jug) {
@@ -360,14 +367,14 @@ bool Partido::hayProrroga() const { return prorroga; }
 
 
 void Partido::imprimirResumen() const {
-    std::cout << "Fecha: " << fecha << " Hora: " << hora << " Sede: " << sede << std::endl;
-    std::cout << equipoLocal->getNombre() << " " << golesLocal << " - " << golesVisitante << " " << equipoVisitante->getNombre() << std::endl;
-    std::cout << "Posesión: " << posesionLocal << "% - " << (100.0f - posesionLocal) << "%" << std::endl;
-    if (prorroga) std::cout << "(Prórroga - " << minutosPartido << " minutos)" << std::endl;
-    std::cout << "Goleadores local: ";
-    for (int i = 0; i < numGoleadoresLocal; ++i) Metricas::contarIteracion(); std::cout << goleadoresLocal[i] << " ";
-    std::cout << std::endl;
-    std::cout << "Goleadores visitante: ";
-    for (int i = 0; i < numGoleadoresVisitante; ++i) Metricas::contarIteracion(); std::cout << goleadoresVisitante[i] << " ";
-    std::cout << std::endl;
+    cout << "Fecha: " << fecha << " Hora: " << hora << " Sede: " << sede << endl;
+    cout << equipoLocal->getNombre() << " " << golesLocal << " - " << golesVisitante << " " << equipoVisitante->getNombre() << endl;
+    cout << "Posesión: " << posesionLocal << "% - " << (100.0f - posesionLocal) << "%" << endl;
+    if (prorroga) cout << "(Prórroga - " << minutosPartido << " minutos)" << endl;
+    cout << "Goleadores local: ";
+    for (int i = 0; i < numGoleadoresLocal; ++i) cout << goleadoresLocal[i] << " ";
+    cout << endl;
+    cout << "Goleadores visitante: ";
+    for (int i = 0; i < numGoleadoresVisitante; ++i) cout << goleadoresVisitante[i] << " ";
+    cout << endl;
 }

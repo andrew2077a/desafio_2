@@ -29,7 +29,7 @@ public:
 
     static void resetearTodo();
 
-    static void rehacer_memoria();
+    static void rehacer_memoria(unsigned long long bytes);
 
     static void mostrarReporte(const string& nombreFuncionalidad);
 
