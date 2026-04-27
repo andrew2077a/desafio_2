@@ -330,7 +330,7 @@ void Torneo::simularFaseGrupos() {
         Equipo* ordenados[4];
         grupos[g].obtenerTablaPosiciones(ordenados);
         cout << "\n--- Grupo " << (char)('A' + g) << " - Tabla de posiciones ---" << endl;
-        cout << "Pos | Equipo                | PJ | PG | PE | PP | GF | GC | DG | PTS" << endl;
+        cout << "Pos | Equipo                 | PJ | PG | PE | PP | GF | GC | DG | PTS" << endl;
         for (int i = 0; i < 4; ++i) {
             if (!ordenados[i]) continue;
             const Estadistica& s = ordenados[i]->getEstadisticas();
@@ -545,17 +545,17 @@ void Torneo::simularEliminatorias() {
 
 // Informe final (simplificado pero completo)
 void Torneo::generarInformeFinal() {
-    cout << "\n╔══════════════════════════════════════════════════════════════╗\n";
-    cout << "║                 INFORME FINAL DEL MUNDIAL 2026                ║\n";
-    cout << "╚══════════════════════════════════════════════════════════════╝\n\n";
+    cout << "\n--------------------------------------------------------------\n";
+    cout << "-                 INFORME FINAL DEL MUNDIAL 2026               -\n";
+    cout << "----------------------------------------------------------------\n\n";
 
     // ========================== 1. RANKING DE LOS 4 PRIMEROS PUESTOS ==========================
     cout << "1. RANKING DE LOS 4 PRIMEROS PUESTOS:"<<endl;
     if (final) {
         Equipo* campeon = (final->getGolesLocal() > final->getGolesVisitante()) ? final->getEquipoLocal() : final->getEquipoVisitante();
         Equipo* subcampeon = (campeon == final->getEquipoLocal()) ? final->getEquipoVisitante() : final->getEquipoLocal();
-        cout << "Campeón:      " << campeon->getNombre() << endl;
-        cout << "Subcampeón:   " << subcampeon->getNombre() << endl;
+        cout << "Campeon:      " << campeon->getNombre() << endl;
+        cout << "Subcampeon:   " << subcampeon->getNombre() << endl;
 
         if (tercerLugar) {
             Equipo* tercero = (tercerLugar->getGolesLocal() > tercerLugar->getGolesVisitante()) ? tercerLugar->getEquipoLocal() : tercerLugar->getEquipoVisitante();
@@ -564,11 +564,11 @@ void Torneo::generarInformeFinal() {
             cout << "Cuarto lugar: " << cuarto->getNombre() << endl;
         }
     } else {
-        cout << "No hay información de la final."<<endl;
+        cout << "No hay informacion de la final."<<endl;
     }
     cout << endl;
 
-    // 2. MÁXIMO GOLEADOR DEL EQUIPO CAMPEÓN
+    // 2. MAXIMO GOLEADOR DEL EQUIPO CAMPEON
     if (final) {
         Equipo* campeon = (final->getGolesLocal() > final->getGolesVisitante()) ? final->getEquipoLocal() : final->getEquipoVisitante();
         // Obtener la lista de goleadores del campeon (punteros a Jugador)
@@ -583,7 +583,7 @@ void Torneo::generarInformeFinal() {
                 maxGoleador = jug;
             }
         }
-        cout << "2. MÁXIMO GOLEADOR DEL CAMPEÓN (" << campeon->getNombre() << "): "<<endl;
+        cout << "2. MAXIMO GOLEADOR DEL CAMPEON (" << campeon->getNombre() << "): "<<endl;
         if (maxGoleador) {
             cout << "   " << maxGoleador->getNombreCompleto() << " con " << maxGoles << " gol(es)."<<endl;
         } else {
@@ -641,7 +641,7 @@ void Torneo::generarInformeFinal() {
     }
     cout << endl;
 
-    //4. EQUIPO CON MÁS GOLES HISTORICOS (ACTUALIZADOS)
+    //4. EQUIPO CON MAS GOLES HISTORICOS (ACTUALIZADOS)
     Equipo* equipoMasGoles = nullptr;
     unsigned short int maxGolesHist = 0;
     for (unsigned short int i = 0; i < totalEquipos; ++i) {
@@ -652,22 +652,20 @@ void Torneo::generarInformeFinal() {
             equipoMasGoles = equipos[i];
         }
     }
-    cout << "4. EQUIPO CON MÁS GOLES HISTÓRICOS : "<<endl;
+    cout << "4. EQUIPO CON MAS GOLES HISTORICOS : "<<endl;
     if (equipoMasGoles) {
         cout << "   " << equipoMasGoles->getNombre() << " con " << maxGolesHist << " goles."<<endl;
     }
     else {
-        cout << "   No hay información."<<endl;
+        cout << "   No hay informacion."<<endl;
     }
     cout << endl;
 
-    // ========================== 5. CONFEDERACIÓN CON MAYOR PRESENCIA EN CADA ETAPA ==========================
+    // ========================== 5. CONFEDERACION CON MAYOR PRESENCIA EN CADA ETAPA ==========================
     // Contadores: para R16, R8, R4 (los 4 mejores: semifinalistas)
     // Para R16: usamos los equipos que jugaron la ronda16.
     // Para R8: equipos que jugaron ronda8.
     // Para R4: equipos que jugaron semifinales (semis).
-    // Como los arrays de partidos contienen los partidos, podemos extraer los equipos participantes.
-    // Usaremos un mapa simple de confederación -> contador (como no podemos usar map, usamos arrays asociativos con búsqueda lineal, dado que hay pocas confederaciones).
 
     // Lista de confederaciones posibles (según el CSV: UEFA, CONMEBOL, CONCACAF, CAF, AFC, OFC)
     const char* confederaciones[] = {"UEFA", "CONMEBOL", "CONCACAF", "CAF", "AFC", "OFC"};
@@ -740,6 +738,7 @@ void Torneo::generarInformeFinal() {
         }
     };
 
+    cout << "5. CONFEDERACION CON MAYOR PRESENCIA:" << endl;
     string nombreR16;
     int cantidadR16;
     confMaxConValor(contadoresR16, nombreR16, cantidadR16);
@@ -755,16 +754,9 @@ void Torneo::generarInformeFinal() {
     confMaxConValor(contadoresR4, nombreR4, cantidadR4);
     cout << "    - Semifinales (R4): " << nombreR4 << " (" << cantidadR4 << " equipos)"<<endl;
 
-    // ========================== 6. (OPCIONAL) MÉTRICAS DE EFICIENCIA ==========================
-    // Si deseas mostrar las métricas de iteraciones y memoria al finalizar el torneo,
-    // puedes incluir aquí la llamada a un método de medición (por ejemplo, ContadorMetricas::reportar())
-    // Pero como no hemos implementado esa parte, lo dejamos comentado o lo agregamos más adelante.
-    // cout << "6. CONSUMO DE RECURSOS:\n";
-    // ContadorMetricas::reportar();
-
-    cout << "╔══════════════════════════════════════════════════════════════╗\n";
-    cout << "║                      FIN DEL INFORME                         ║\n";
-    cout << "╚══════════════════════════════════════════════════════════════╝\n";
+    cout << "\n--------------------------------------------------------------\n";
+    cout << "-                        FIN DEL INFORME                       -\n";
+    cout << "----------------------------------------------------------------\n";
 }
 
 void Torneo::ejecutar() {

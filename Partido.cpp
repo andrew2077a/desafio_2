@@ -369,12 +369,12 @@ bool Partido::hayProrroga() const { return prorroga; }
 void Partido::imprimirResumen() const {
     cout << "Fecha: " << fecha << " Hora: " << hora << " Sede: " << sede << endl;
     cout << equipoLocal->getNombre() << " " << golesLocal << " - " << golesVisitante << " " << equipoVisitante->getNombre() << endl;
-    cout << "Posesión: " << posesionLocal << "% - " << (100.0f - posesionLocal) << "%" << endl;
-    if (prorroga) cout << "(Prórroga - " << minutosPartido << " minutos)" << endl;
+    cout << "Posesion: " << posesionLocal << "% - " << (100.0f - posesionLocal) << "%" << endl;
+    if (prorroga) cout << "(Prorroga - " << minutosPartido << " minutos)" << endl;
     cout << "Goleadores local: ";
     for (int i = 0; i < numGoleadoresLocal; ++i) cout << goleadoresLocal[i] << " ";
     cout << endl;
     cout << "Goleadores visitante: ";
     for (int i = 0; i < numGoleadoresVisitante; ++i) cout << goleadoresVisitante[i] << " ";
-    cout << endl;
+    cout <<endl<<"----------------------------------------------------------------------------"<<endl;
 }
